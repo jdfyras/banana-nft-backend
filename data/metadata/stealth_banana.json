@@ -1,0 +1,19 @@
+{
+  "name": "Stealth Banana",
+  "description": "Elusive and enigmatic, Stealth Banana blends into the night with its shadowy presence.",
+  "image": "ipfs://QmbFQXjXu3jWfngkrbT4xMCNaUXojYxFBKEV2qUVH3zWSJ",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Stealth"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Uncommon"
+    },
+    {
+      "trait_type": "Ability",
+      "value": "Invisibility"
+    }
+  ]
+}

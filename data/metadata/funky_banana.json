@@ -1,0 +1,19 @@
+{
+  "name": "Funky Banana",
+  "description": "Bursting with personality and groove, Funky Banana brings a vibrant rhythm to the collection.",
+  "image": "ipfs://QmP6CsZZYUogW483uU5KqKup9hgRKZi5ddXEGFjee5eQRj",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Funky"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Style",
+      "value": "Groovy"
+    }
+  ]
+}

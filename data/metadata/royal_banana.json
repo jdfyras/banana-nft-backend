@@ -1,0 +1,19 @@
+{
+  "name": "Royal Banana",
+  "description": "A majestic banana crowned with regality and excellence, fit for the Banana Collection's elite.",
+  "image": "ipfs://QmPJCmbgNno2ptTbbumAR1Fx5TLpf8Zo6ZHEseKxqtPJST",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Royal"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Accessory",
+      "value": "Crown"
+    }
+  ]
+}

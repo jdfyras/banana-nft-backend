@@ -1,0 +1,19 @@
+{
+  "name": "Electric Banana",
+  "description": "This vibrant banana crackles with energy, electrifying the Banana Collection.",
+  "image": "ipfs://QmaX4sMbjoEfs7nLjBUXMAbKG3fYv1WpwJRjgZPqMA4sBY",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Electric"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Vibe",
+      "value": "Energetic"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "name": "Pixel Banana",
+  "description": "A throwback to retro gaming, Pixel Banana features an 8-bit design and nostalgic charm.",
+  "image": "ipfs://QmUgmGCU6L5r6YWaha8sCHmCrkxWifybKfpbvxrzNG8MzF",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Pixel"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Uncommon"
+    },
+    {
+      "trait_type": "Resolution",
+      "value": "8-bit"
+    }
+  ]
+}

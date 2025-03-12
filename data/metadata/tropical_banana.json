@@ -1,0 +1,19 @@
+{
+  "name": "Tropical Banana",
+  "description": "Radiating the warmth and brightness of the tropics, this banana brings a burst of island vibes.",
+  "image": "ipfs://QmUpCibQGBs5QuxRj9XVcXdw5ePKP4qd7CZLFFCkpnPYbN",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Tropical"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Common"
+    },
+    {
+      "trait_type": "Climate",
+      "value": "Sunny"
+    }
+  ]
+}

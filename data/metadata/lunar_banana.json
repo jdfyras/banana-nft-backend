@@ -1,0 +1,19 @@
+{
+  "name": "Lunar Banana",
+  "description": "Inspired by the mysteries of the moon, Lunar Banana glows softly with lunar energy.",
+  "image": "ipfs://Qmf79nEXfVfokYLRNgnJ4DZrgQbGZhdfUDN5yi48ZtJNoi",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Lunar"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Rare"
+    },
+    {
+      "trait_type": "Phase",
+      "value": "Full Moon"
+    }
+  ]
+}

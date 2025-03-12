@@ -1,0 +1,19 @@
+{
+  "name": "Ninja Banana",
+  "description": "Swift and stealthy, this banana moves like a ninja in the shadows of the collection.",
+  "image": "ipfs://QmWKmLP7qj2jDDUcXxigh3TqYsQGju8qvF4wrKD2z8xQXL",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Ninja"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Uncommon"
+    },
+    {
+      "trait_type": "Skill",
+      "value": "Stealth"
+    }
+  ]
+}

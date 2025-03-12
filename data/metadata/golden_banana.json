@@ -1,0 +1,19 @@
+{
+  "name": "Golden Banana",
+  "description": "A rare, radiant banana with a shimmering golden peel from the Banana Collection.",
+  "image": "ipfs://QmdRqaMQPZj8Hm1mZ9EccCLs5CYMXPvHj6LAgvcEDnSy1P",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Golden"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Epic"
+    },
+    {
+      "trait_type": "Taste",
+      "value": "Sweet"
+    }
+  ]
+}

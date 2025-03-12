@@ -1,0 +1,192 @@
+[
+  {
+    "name": "Golden Banana",
+    "description": "A rare, radiant banana with a shimmering golden peel from the Banana Collection.",
+    "image": "ipfs://QmdRqaMQPZj8Hm1mZ9EccCLs5CYMXPvHj6LAgvcEDnSy1P",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Golden"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Epic"
+      },
+      {
+        "trait_type": "Taste",
+        "value": "Sweet"
+      }
+    ]
+  },
+  {
+    "name": "Electric Banana",
+    "description": "This vibrant banana crackles with energy, electrifying the Banana Collection.",
+    "image": "ipfs://QmaX4sMbjoEfs7nLjBUXMAbKG3fYv1WpwJRjgZPqMA4sBY",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Electric"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Rare"
+      },
+      {
+        "trait_type": "Vibe",
+        "value": "Energetic"
+      }
+    ]
+  },
+  {
+    "name": "Cosmic Banana",
+    "description": "A banana that seems to be infused with the mysteries of the universe, part of our interstellar collection.",
+    "image": "ipfs://QmdvzJvzT4nvyZpzbN7fDCHGyGtrZDM5Kbo8mMfBuAUxW8",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Cosmic"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Legendary"
+      },
+      {
+        "trait_type": "Element",
+        "value": "Stardust"
+      }
+    ]
+  },
+  {
+    "name": "Ninja Banana",
+    "description": "Swift and stealthy, this banana moves like a ninja in the shadows of the collection.",
+    "image": "ipfs://QmWKmLP7qj2jDDUcXxigh3TqYsQGju8qvF4wrKD2z8xQXL",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Ninja"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Uncommon"
+      },
+      {
+        "trait_type": "Skill",
+        "value": "Stealth"
+      }
+    ]
+  },
+  {
+    "name": "Funky Banana",
+    "description": "Bursting with personality and groove, Funky Banana brings a vibrant rhythm to the collection.",
+    "image": "ipfs://QmP6CsZZYUogW483uU5KqKup9hgRKZi5ddXEGFjee5eQRj",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Funky"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Rare"
+      },
+      {
+        "trait_type": "Style",
+        "value": "Groovy"
+      }
+    ]
+  },
+  {
+    "name": "Royal Banana",
+    "description": "A majestic banana crowned with regality and excellence, fit for the Banana Collection's elite.",
+    "image": "ipfs://QmPJCmbgNno2ptTbbumAR1Fx5TLpf8Zo6ZHEseKxqtPJST",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Royal"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Legendary"
+      },
+      {
+        "trait_type": "Accessory",
+        "value": "Crown"
+      }
+    ]
+  },
+  {
+    "name": "Pixel Banana",
+    "description": "A throwback to retro gaming, Pixel Banana features an 8-bit design and nostalgic charm.",
+    "image": "ipfs://QmUgmGCU6L5r6YWaha8sCHmCrkxWifybKfpbvxrzNG8MzF",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Pixel"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Uncommon"
+      },
+      {
+        "trait_type": "Resolution",
+        "value": "8-bit"
+      }
+    ]
+  },
+  {
+    "name": "Tropical Banana",
+    "description": "Radiating the warmth and brightness of the tropics, this banana brings a burst of island vibes.",
+    "image": "ipfs://QmUpCibQGBs5QuxRj9XVcXdw5ePKP4qd7CZLFFCkpnPYbN",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Tropical"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Common"
+      },
+      {
+        "trait_type": "Climate",
+        "value": "Sunny"
+      }
+    ]
+  },
+  {
+    "name": "Lunar Banana",
+    "description": "Inspired by the mysteries of the moon, Lunar Banana glows softly with lunar energy.",
+    "image": "ipfs://Qmf79nEXfVfokYLRNgnJ4DZrgQbGZhdfUDN5yi48ZtJNoi",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Lunar"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Rare"
+      },
+      {
+        "trait_type": "Phase",
+        "value": "Full Moon"
+      }
+    ]
+  },
+  {
+    "name": "Stealth Banana",
+    "description": "Elusive and enigmatic, Stealth Banana blends into the night with its shadowy presence.",
+    "image": "ipfs://QmbFQXjXu3jWfngkrbT4xMCNaUXojYxFBKEV2qUVH3zWSJ",
+    "attributes": [
+      {
+        "trait_type": "Type",
+        "value": "Stealth"
+      },
+      {
+        "trait_type": "Rarity",
+        "value": "Uncommon"
+      },
+      {
+        "trait_type": "Ability",
+        "value": "Invisibility"
+      }
+    ]
+  }
+]

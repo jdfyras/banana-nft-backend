@@ -1,0 +1,19 @@
+{
+  "name": "Cosmic Banana",
+  "description": "A banana that seems to be infused with the mysteries of the universe, part of our interstellar collection.",
+  "image": "ipfs://QmdvzJvzT4nvyZpzbN7fDCHGyGtrZDM5Kbo8mMfBuAUxW8",
+  "attributes": [
+    {
+      "trait_type": "Type",
+      "value": "Cosmic"
+    },
+    {
+      "trait_type": "Rarity",
+      "value": "Legendary"
+    },
+    {
+      "trait_type": "Element",
+      "value": "Stardust"
+    }
+  ]
+}
