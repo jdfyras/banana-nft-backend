@@ -28,26 +28,21 @@ const URIS_FILE = path.join(DATA_DIR, "designs_distribution.json");
 // Initialize JSON files if not present
 // =====================================
 function initFiles() {
-  if (!fs.existsSync(LOGGED_USERS_FILE)) {
-    fs.writeFileSync(LOGGED_USERS_FILE, JSON.stringify({}), "utf8");
-  }
-  if (!fs.existsSync(MINTED_NFTS_FILE)) {
-    // mintedNFTs.json holds a lastTokenId counter and mapping from user addresses to tokenIds.
-    fs.writeFileSync(
-      MINTED_NFTS_FILE,
-      JSON.stringify({ lastTokenId: 0, users: {} }),
-      "utf8"
-    );
-  }
-  if (!fs.existsSync(BATCHES_FILE)) {
-    // batches.json will store each minted batch with its merkle tree data.
-    fs.writeFileSync(BATCHES_FILE, JSON.stringify([]), "utf8");
-  }
-  if (!fs.existsSync(URIS_FILE)) {
-    // Sample weighted URIs file. Adjust the values as needed.
-    console.error("Please set URIs file in designs_distribution.json");
-    process.exit(1);
-  }
+  const defaults = {
+    [LOGGED_USERS_FILE]: "{}",
+    [MINTED_NFTS_FILE]: JSON.stringify({ lastTokenId: 0, users: {} }),
+    [BATCHES_FILE]: "[]",
+    [URIS_FILE]: JSON.stringify({
+      // "ipfs://QmDefaultURI1": 1,
+      // "ipfs://QmDefaultURI2": 1,
+    }),
+  };
+
+  Object.entries(defaults).forEach(([path, content]) => {
+    if (!fs.existsSync(path)) {
+      fs.writeFileSync(path, content, "utf8");
+    }
+  });
 }
 initFiles();
 
@@ -55,7 +50,25 @@ initFiles();
 // Helper Functions for File I/O
 // ==============================
 function readJSON(filePath) {
-  return JSON.parse(fs.readFileSync(filePath, "utf8"));
+  try {
+    const content = fs.readFileSync(filePath, "utf8");
+    // Handle empty files
+    if (content.trim() === "") {
+      // Return appropriate default based on expected structure
+      if (filePath === LOGGED_USERS_FILE) return {};
+      if (filePath === MINTED_NFTS_FILE) return { lastTokenId: 0, users: {} };
+      if (filePath === BATCHES_FILE) return [];
+      return {};
+    }
+    return JSON.parse(content);
+  } catch (err) {
+    console.error(`Error reading ${filePath}:`, err);
+    // Return appropriate default structure
+    if (filePath === LOGGED_USERS_FILE) return {};
+    if (filePath === MINTED_NFTS_FILE) return { lastTokenId: 0, users: {} };
+    if (filePath === BATCHES_FILE) return [];
+    return {};
+  }
 }
 function writeJSON(filePath, data) {
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2), "utf8");
@@ -143,7 +156,7 @@ if (
   );
   process.exit(1);
 }
-const provider = new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 
 // Minimal ABI including the functions we need (mintWithMerkle and reveal)
@@ -156,11 +169,18 @@ const contract = new ethers.Contract(
   contractABI,
   wallet
 );
-
+async function checkBalance() {
+  const balance = await provider.getBalance(wallet.address);
+  console.log("Wallet balance:", ethers.formatEther(balance), "ETH");
+  if (balance === 0n) {
+    throw new Error("Insufficient balance - fund your wallet!");
+  }
+}
 // ==========================================
 // Scheduled Job: Mint NFT Batches Every 5 Minutes
 // ==========================================
 async function mintBatches() {
+  await checkBalance(); // Check balance before proceeding
   const loggedUsers = readJSON(LOGGED_USERS_FILE);
   const mintedData = getMintedNFTData();
   const batches = getBatches();
@@ -177,11 +197,12 @@ async function mintBatches() {
       const uri = getRandomURI();
       chosenURIs.push(uri);
       // Compute leaf: keccak256(abi.encodePacked(tokenId, uri))
-      const encoded = ethers.utils.solidityPack(
+      const encoded = ethers.solidityPacked(
         ["uint256", "string"],
         [tokenId, uri]
       );
-      const leaf = ethers.utils.keccak256(encoded);
+
+      const leaf = ethers.keccak256(encoded);
       leaves.push(leaf);
       batchTokenIds.push(tokenId);
     }
@@ -198,8 +219,13 @@ async function mintBatches() {
     try {
       // Call contract mint function
       const tx = await contract.mintWithMerkle(merkleRoot, userAddress, 50);
+      // const tx = await contract.mintWithMerkle(merkleRoot, userAddress, 50, {
+      //   gasLimit: 500000,
+      //   maxPriorityFeePerGas: ethers.parseUnits("2", "gwei"),
+      //   maxFeePerGas: ethers.parseUnits("20", "gwei"),
+      // });
       await tx.wait();
-      console.log(`Mint tx confirmed for ${userAddress}`);
+      console.log(`Mint tx coonfirmed for ${userAddress}`);
     } catch (err) {
       console.error(`Error minting for ${userAddress}:`, err);
       continue;
@@ -235,8 +261,8 @@ async function mintBatches() {
 }
 
 // Schedule mintBatches every 5 minutes.
-setInterval(mintBatches, 5 * 60 * 1000);
-
+setInterval(mintBatches, 60 * 1000);
+// setInterval(mintBatches,5 * 60 * 1000);
 // ==========================================
 // Express Server and HTTP Endpoints
 // ==========================================
@@ -246,7 +272,7 @@ app.use(express.json());
 // POST /login : log (or update) a user's heartbeat
 app.post("/login", (req, res) => {
   const address = req.body.address;
-  if (!address) {
+  if (!address || !ethers.isAddress(address)) {
     return res.status(400).json({ error: "Missing Ethereum address" });
   }
   updateUserHeartbeat(address);
@@ -293,11 +319,10 @@ app.post("/reveal", async (req, res) => {
   }
 
   // Recompute the leaf hash for (tokenId, uri)
-  const encoded = ethers.utils.solidityPack(
-    ["uint256", "string"],
-    [tokenId, uri]
-  );
-  const leaf = ethers.utils.keccak256(encoded);
+
+  const encoded = ethers.solidityPacked(["uint256", "string"], [tokenId, uri]);
+  // const leaf = ethers.utils.keccak256(encoded);
+  const leaf = ethers.keccak256(encoded);
 
   // Rebuild the Merkle tree from stored leaves.
   const tree = new MerkleTree(targetBatch.leaves, keccak256, {
