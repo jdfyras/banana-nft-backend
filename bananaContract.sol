@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// Import OpenZeppelin contracts for ERC721, ownership, counters and merkle proof verification
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
@@ -11,25 +10,19 @@ contract MerkleNFT is ERC721, Ownable(msg.sender) {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
 
-    // Array to store merkle roots provided by the owner.
     bytes32[] public merkleRoots;
 
     // Mapping to record the mint timestamp for each token.
     mapping(uint256 => uint256) public mintTimestamps;
 
-    // Mapping to track if a token has been revealed.
     mapping(uint256 => bool) public revealed;
 
-    // Mapping to store complete URIs for revealed tokens.
     mapping(uint256 => string) private _tokenURIs;
 
-    // Reveal threshold (time window to allow the reveal) in seconds (default is 5 minutes = 300 seconds).
-    uint256 public revealThreshold = 300;
+    uint256 public revealThreshold = 60;
 
-    // Default URI for unrevealed NFTs.
     string public defaultURI;
 
-    // Events for tracking important actions.
     event MerkleSetAdded(uint256 indexed rootIndex, uint256 _quantity, address _user);
     event NFTRevealed(uint256 indexed tokenId, string tokenURI);
     event BatchTransfer(address indexed to, uint256[] tokenIds);

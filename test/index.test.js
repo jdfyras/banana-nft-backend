@@ -12,6 +12,7 @@ const LOGGED_USERS_FILE = path.join(DATA_DIR, "loggedUsers.json");
 const MINTED_NFTS_FILE = path.join(DATA_DIR, "mintedNFTs.json");
 const BATCHES_FILE = path.join(DATA_DIR, "batches.json");
 const URIS_FILE = path.join(DATA_DIR, "designs_distribution.json");
+const TOKEN_URIS_FILE = path.join(DATA_DIR, "token_uris.json");
 
 // Ensure the DATA_DIR exists before tests
 if (!fs.existsSync(DATA_DIR)) {
@@ -21,7 +22,7 @@ if (!fs.existsSync(DATA_DIR)) {
 // Set dummy environment variables so that the process does not exit.
 process.env.RPC_URL = "https://testnet.aurora.dev";
 process.env.PRIVATE_KEY =
-  "8203b32f9a9fa5b6629e89fa00e057b7c873a04d2e6f214b05da470f825abdab";
+  "0000000000000000000000000000000000000000000000000000000000000000"; // dummy key for testing
 process.env.CONTRACT_ADDRESS = "0x8ab00C521C71C57958DaA58d92AEFF7D7Bf5ff05";
 
 // Import the index file (assumes key functions and app are exported)
@@ -32,6 +33,10 @@ const {
   checkOfflineUsers,
   getRandomURI,
   mintBatches,
+  getBatches,
+  getTokenURIs,
+  generateTokenIdsFromRange,
+  generateLeaves,
   app,
   contract,
 } = indexModule;
@@ -50,11 +55,15 @@ describe("File Initialization and Helper Functions", function () {
   });
   afterEach(() => {
     // Clean up all JSON files after each test.
-    [LOGGED_USERS_FILE, MINTED_NFTS_FILE, BATCHES_FILE, URIS_FILE].forEach(
-      (file) => {
-        if (fs.existsSync(file)) fs.unlinkSync(file);
-      }
-    );
+    [
+      LOGGED_USERS_FILE,
+      MINTED_NFTS_FILE,
+      BATCHES_FILE,
+      URIS_FILE,
+      TOKEN_URIS_FILE,
+    ].forEach((file) => {
+      if (fs.existsSync(file)) fs.unlinkSync(file);
+    });
   });
 
   it("should have created the required JSON files on startup", function () {
@@ -62,6 +71,7 @@ describe("File Initialization and Helper Functions", function () {
     expect(fs.existsSync(LOGGED_USERS_FILE)).to.be.true;
     expect(fs.existsSync(MINTED_NFTS_FILE)).to.be.true;
     expect(fs.existsSync(BATCHES_FILE)).to.be.true;
+    expect(fs.existsSync(TOKEN_URIS_FILE)).to.be.true;
   });
 
   describe("User management functions", function () {
@@ -122,6 +132,27 @@ describe("File Initialization and Helper Functions", function () {
       expect(availableURIs).to.include(uri);
     });
   });
+
+  describe("generateTokenIdsFromRange()", function () {
+    it("should generate correct token ID array from a range", function () {
+      const tokenIds = generateTokenIdsFromRange(1, 5);
+      expect(tokenIds).to.deep.equal([1, 2, 3, 4, 5]);
+    });
+  });
+
+  describe("generateLeaves()", function () {
+    it("should generate correct leaves from token IDs and URIs", function () {
+      const startId = 1;
+      const count = 3;
+      const uris = {
+        1: "uri1",
+        2: "uri2",
+        3: "uri3",
+      };
+      const leaves = generateLeaves(startId, count, uris);
+      expect(leaves).to.have.length(3);
+    });
+  });
 });
 
 describe("mintBatches()", function () {
@@ -139,6 +170,7 @@ describe("mintBatches()", function () {
       "utf8"
     );
     fs.writeFileSync(BATCHES_FILE, JSON.stringify([]), "utf8");
+    fs.writeFileSync(TOKEN_URIS_FILE, JSON.stringify({}), "utf8");
     // Stub the ethers contract mintWithMerkle method so no real network call is made.
     mintWithMerkleStub = sinon
       .stub(contract, "mintWithMerkle")
@@ -148,26 +180,36 @@ describe("mintBatches()", function () {
   });
   afterEach(() => {
     mintWithMerkleStub.restore();
-    [LOGGED_USERS_FILE, MINTED_NFTS_FILE, BATCHES_FILE].forEach((file) => {
+    [
+      LOGGED_USERS_FILE,
+      MINTED_NFTS_FILE,
+      BATCHES_FILE,
+      TOKEN_URIS_FILE,
+    ].forEach((file) => {
       if (fs.existsSync(file)) fs.unlinkSync(file);
     });
   });
   it("should mint a batch for each logged user and update mintedNFTs and batches files", async function () {
     await mintBatches();
 
-    // Verify mintedNFTs.json is updated with 50 new token IDs.
+    // Verify mintedNFTs.json is updated with a range of 50 tokens
     const mintedData = JSON.parse(fs.readFileSync(MINTED_NFTS_FILE, "utf8"));
     expect(mintedData.lastTokenId).to.equal(50);
-    expect(mintedData.users["0xuser"]).to.be.an("array").with.length(50);
+    expect(mintedData.users["0xuser"]).to.be.an("array").with.length(1);
+    expect(mintedData.users["0xuser"][0]).to.deep.equal([1, 50]);
 
-    // Verify batches.json contains one batch with expected properties.
+    // Verify batches.json contains one batch with expected properties in new format
     const batches = JSON.parse(fs.readFileSync(BATCHES_FILE, "utf8"));
     expect(batches).to.be.an("array").with.length(1);
     expect(batches[0]).to.have.property("merkleRoot");
     expect(batches[0])
-      .to.have.property("tokenIds")
-      .that.is.an("array")
-      .with.length(50);
+      .to.have.property("tokenIdRange")
+      .that.deep.equals([1, 50]);
+    expect(batches[0]).to.not.have.property("leaves"); // Leaves should no longer be stored
+
+    // Verify token URIs are stored separately
+    const tokenURIs = JSON.parse(fs.readFileSync(TOKEN_URIS_FILE, "utf8"));
+    expect(Object.keys(tokenURIs)).to.have.length(50);
   });
 });
 
@@ -186,13 +228,18 @@ describe("Express Endpoints", function () {
       JSON.stringify({ "http://example.com/uri": 1 }),
       "utf8"
     );
+    fs.writeFileSync(TOKEN_URIS_FILE, JSON.stringify({}), "utf8");
   });
   afterEach(() => {
-    [LOGGED_USERS_FILE, MINTED_NFTS_FILE, BATCHES_FILE, URIS_FILE].forEach(
-      (file) => {
-        if (fs.existsSync(file)) fs.unlinkSync(file);
-      }
-    );
+    [
+      LOGGED_USERS_FILE,
+      MINTED_NFTS_FILE,
+      BATCHES_FILE,
+      URIS_FILE,
+      TOKEN_URIS_FILE,
+    ].forEach((file) => {
+      if (fs.existsSync(file)) fs.unlinkSync(file);
+    });
   });
 
   it("POST /login should log in a user", async function () {
@@ -215,22 +262,22 @@ describe("Express Endpoints", function () {
     const uri = "http://example.com/uri";
 
     beforeEach(() => {
-      // Create a batch record that includes the tokenId for user 0xtest.
-      const ethers = require("ethers");
-      const encoded = ethers.utils.solidityPack(
-        ["uint256", "string"],
-        [tokenId, uri]
-      );
-      const leaf = ethers.utils.keccak256(encoded);
+      // Create a batch record with token ID range format
       const batchRecord = {
         batchId: 0,
         user: "0xtest",
-        tokenIds: [tokenId],
+        tokenIdRange: [1, 3], // Range for tokenIds 1, 2, 3
         merkleRoot: "0xabc",
-        leaves: [leaf],
-        uris: { [tokenId]: uri },
       };
       fs.writeFileSync(BATCHES_FILE, JSON.stringify([batchRecord]), "utf8");
+
+      // Create token URIs mapping
+      const tokenURIs = {
+        1: uri,
+        2: "http://example.com/uri2",
+        3: "http://example.com/uri3",
+      };
+      fs.writeFileSync(TOKEN_URIS_FILE, JSON.stringify(tokenURIs), "utf8");
 
       // Stub the ethers contract reveal method.
       revealStub = sinon.stub(contract, "reveal").callsFake(async () => {
@@ -240,12 +287,16 @@ describe("Express Endpoints", function () {
     afterEach(() => {
       revealStub.restore();
       if (fs.existsSync(BATCHES_FILE)) fs.unlinkSync(BATCHES_FILE);
+      if (fs.existsSync(TOKEN_URIS_FILE)) fs.unlinkSync(TOKEN_URIS_FILE);
     });
 
     it("should reveal an NFT and return the proof", async function () {
+      // This test will not actually verify the proof generation due to the complexity
+      // of rebuilding the exact expected merkle tree in tests, but it will check the API flow
       const res = await request
         .post("/reveal")
         .send({ address: "0xtest", tokenId });
+
       expect(res.status).to.equal(200);
       expect(res.body).to.have.property("status", "NFT revealed");
       expect(res.body).to.have.property("tokenId", tokenId);

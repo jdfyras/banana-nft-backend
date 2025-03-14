@@ -6,7 +6,14 @@
     "index": "index.js"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "test": "node test/run-tests.js",
+    "test:api": "node test/api/api-test.js",
+    "test:users": "node test/api/user-minting-cycle-test.js",
+    "test:merkle": "node test/contract/merkle-test.js",
+    "test:mocha": "mocha test/**/*.test.js",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "",
@@ -17,11 +24,15 @@
     "ethers": "^6.13.5",
     "express": "^4.21.2",
     "keccak256": "^1.0.6",
-    "merkletreejs": "^0.5.1"
+    "merkletreejs": "^0.5.1",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
+    "axios": "^1.8.3",
     "chai": "^5.2.0",
+    "eslint": "^8.57.0",
     "mocha": "^11.1.0",
+    "nodemon": "^3.1.0",
     "sinon": "^19.0.2",
     "supertest": "^7.0.0"
   }
