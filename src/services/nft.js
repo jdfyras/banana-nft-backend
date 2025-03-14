@@ -199,19 +199,63 @@ async function revealNFT(userAddress, tokenId) {
 
     // Generate Merkle proof
     const [startId, count] = batch.tokenIdRange;
+
+    console.log(
+      `Revealing token ${tokenId} from batch starting at ${startId} with ${count} tokens`
+    );
+    console.log(`Using merkle root: ${batch.merkleRoot}`);
+
+    // Use the fixed generateLeaves function from nftModel
     const leaves = nftModel.generateLeaves(startId, count, tokenURIs);
     const merkleTree = new MerkleTree(leaves, keccak256, { sort: true });
 
-    // Find the index of this token in the batch
+    // Check if our computed merkle root matches the stored one
+    const calculatedRoot = merkleTree.getHexRoot();
+    if (calculatedRoot !== batch.merkleRoot) {
+      console.error(
+        `Merkle root mismatch! Calculated: ${calculatedRoot}, Stored: ${batch.merkleRoot}`
+      );
+    }
+
+    // Find the token index in the batch (0-based)
     const tokenIndex = tokenId - startId;
+    if (tokenIndex < 0 || tokenIndex >= count) {
+      return {
+        success: false,
+        error: `Token index calculation error: ${tokenId} is not in range [${startId}, ${
+          startId + count - 1
+        }]`,
+      };
+    }
+
+    // Get the leaf for this token
     const leaf = leaves[tokenIndex];
     const proof = merkleTree.getHexProof(leaf);
 
-    // Find the batch index
+    console.log(
+      `Generated proof for token ${tokenId} (index ${tokenIndex}): ${proof.join(
+        ", "
+      )}`
+    );
+
+    // Verify the proof locally before sending to the contract
+    const isValidLocally = merkleTree.verify(proof, leaf, calculatedRoot);
+    console.log(
+      `Local proof verification: ${isValidLocally ? "VALID" : "INVALID"}`
+    );
+
+    // Find the batch index for the contract call
     const batches = dataModel.getBatches();
     const rootIndex = batches.findIndex(
       (b) => b.merkleRoot === batch.merkleRoot
     );
+
+    if (rootIndex === -1) {
+      return {
+        success: false,
+        error: "Batch not found in batches array",
+      };
+    }
 
     // Call contract to reveal NFT
     const tx = await contractConfig.contract.reveal(

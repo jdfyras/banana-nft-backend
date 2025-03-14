@@ -48,11 +48,11 @@ function generateLeaves(startTokenId, count, uris) {
     if (!uri) {
       throw new Error(`URI not found for token ID ${tokenId}`);
     }
-    const encoded = ethers.solidityPacked(
-      ["uint256", "string"],
-      [tokenId, uri]
-    );
-    const leaf = ethers.keccak256(encoded);
+
+    // Only hash the token ID itself, not the URI
+    // This matches the contract's expectation
+    const tokenIdStr = tokenId.toString();
+    const leaf = keccak256(Buffer.from(tokenIdStr));
     leaves.push(leaf);
   }
   return leaves;
